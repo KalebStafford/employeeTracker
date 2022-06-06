@@ -53,3 +53,23 @@ function dataPrompt() {
       }
     });
 }
+function viewEmployeesTask() {
+  let database = `
+  SELECT x.id, x.first_name, x.last_name, y.title, z.name 
+  AS department, y.salary, 
+  CONCAT(i.first_name, ' ', i.last_name) 
+  AS manager
+  FROM employee x
+  LEFT JOIN role y
+	ON x.role_id = y.id
+  LEFT JOIN department z
+  ON z.id = y.department_id
+  LEFT JOIN employee i
+	ON i.id = x.manager_id`;
+  connection.query(database, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    console.log("Viewing Employee Table");
+    dataPrompt();
+  });
+}
