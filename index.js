@@ -139,3 +139,44 @@ function addEmployees() {
     promptInsert(roleOptions);
   });
 }
+function promptInsert(roleOptions) {
+  inquirer
+    .prompt([
+      {
+        name: "first_name",
+        message: "First Name:",
+        type: "input",
+      },
+      {
+        name: "last_name",
+        message: "Last Name:",
+        type: "input",
+      },
+      {
+        name: "roleID",
+        message: "Employee's Role:",
+        choices: roleOptions,
+        type: "list",
+      },
+    ])
+    .then((choice) => {
+      console.log(choice);
+      let database = `
+      INSERT INTO employee SET?`;
+      connection.query(
+        database,
+        {
+          first_name: choice.first_name,
+          last_name: choice.last_name,
+          role_id: choice.roleID,
+          manager_id: choice.managerId,
+        },
+        (err, res) => {
+          if (err) throw err;
+          console.log(res.insertedRows + "Employee Added");
+          console.table(res);
+          dataPrompt();
+        }
+      );
+    });
+}
