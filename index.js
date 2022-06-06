@@ -316,3 +316,42 @@ function addRoles() {
     promptAddRole(departmentOptions);
   });
 }
+function promptAddRole(departmentOptions) {
+  inquirer
+    .prompt([
+      {
+        name: "titleRole",
+        message: "input role title:",
+        type: "input",
+      },
+      {
+        name: "salaryRole",
+        message: "input role salary:",
+        type: "input",
+      },
+      {
+        name: "departmentIdentification",
+        message: "Find Department:",
+        choices: departmentOptions,
+        type: "list",
+      },
+    ])
+    .then((choice) => {
+      let database = `
+      INSERT INTO role SET ?`;
+      connection.query(
+        database,
+        {
+          title: choice.title,
+          salary: choice.salary,
+          department_id: choice.departmentIdentification,
+        },
+        (err, res) => {
+          if (err) throw err;
+          console.log("role successfully inserted");
+          console.table(res);
+          dataPrompt();
+        }
+      );
+    });
+}
