@@ -219,3 +219,31 @@ function promptDelete(deleteOptions) {
       });
     });
 }
+function updateEmpRole() {
+  employeeData();
+}
+function employeeData() {
+  let database = `
+  SELECT x.id, x.first_name, x.last_name, y.title, z.name AS department, y.salary, 
+  CONCAT(i.first_name, ' ', i.last_name) 
+  AS manager
+  FROM employee x
+  JOIN role y
+	ON x.role_id = y.id
+  JOIN department z
+  ON z.id = y.department_id
+  JOIN employee i
+	ON i.id = i.manager_id`;
+  connection.query(database,(err, res) => {
+    if (err) throw err;
+    let employeeChoices = res.map(({ id, first_name, last_name }) => ({
+      value: id,
+      name: `
+      ${first_name}
+      ${last_name}`,
+    }));
+    console.log("employee data selected");
+    console.table(res);
+    roleArray(employeeChoices);
+  });
+}
