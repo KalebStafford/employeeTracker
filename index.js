@@ -180,3 +180,21 @@ function promptInsert(roleOptions) {
       );
     });
 }
+function removeEmployees() {
+  let database = `
+    SELECT x.id, x.first_name, x.last_name
+    FROM employee x`;
+  connection.query(database, (err, res) => {
+    if (err) throw err;
+    let deleteOptions = res.map(({ id, first_name, last_name }) => ({
+      value: id,
+      name: `
+      ${id} 
+      ${first_name} 
+      ${last_name}`,
+    }));
+    console.log("Employee Information");
+    console.table(res);
+    promptDelete(deleteOptions);
+  });
+}
