@@ -94,3 +94,32 @@ function viewEmpByDepoTask() {
     promptDepartment(departmentOptions);
   });
 }
+function promptDepartment(departmentOptions) {
+  inquirer
+    .prompt([
+      {
+        name: "departmentIdentification",
+        message: "Choose Department:",
+        choices: departmentOptions,
+        type: "list",
+      },
+    ])
+    .then((choice) => {
+      console.log("choice", choice.departmentIdentification);
+      let database = `
+      SELECT x.id, x.first_name, x.last_name, y.title, z.name 
+      AS department 
+      FROM employee x
+      JOIN role y
+	    ON x.role_id = y.id
+      JOIN department z
+      ON z.id = y.department_id
+      WHERE z.id = ?`;
+      connection.query(database, choice.departmentIdentification,(err, res) => {
+        if (err) throw err;
+        console.log(res.affectedRows + "Viewing employees (by Department)");
+        console.table("response", res);
+        dataPrompt();
+      });
+    });
+}
