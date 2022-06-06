@@ -296,3 +296,23 @@ function promptEmployeeRole(employeeChoices, roleOptions) {
       );
     });
 }
+function addRoles() {
+  let database = `SELECT z.id, z.name, y.salary AS budget
+    FROM employee x
+    JOIN role y
+    ON x.role_id = y.id
+    JOIN department z
+    ON z.id = y.department_id
+    GROUP BY z.id, z.name`;
+  connection.query(database, (err, res) => {
+    if (err) throw err;
+    let departmentOptions = res.map(({ id, name }) => ({
+      value: id,
+      name: `
+      ${id} 
+      ${name}`,
+    }));
+    console.table(res);
+    promptAddRole(departmentOptions);
+  });
+}
