@@ -73,3 +73,24 @@ function viewEmployeesTask() {
     dataPrompt();
   });
 }
+function viewEmpByDepoTask() {
+  let database = `
+  SELECT z.id, z.name, y.salary 
+  AS budget
+  FROM employee x
+  LEFT JOIN role y
+	ON x.role_id = y.id
+  LEFT JOIN department z
+  ON z.id = y.department_id
+  GROUP BY z.id, z.name`;
+  connection.query(database, (err, res) => {
+    if (err) throw err;
+    let departmentOptions = res.map((info) => ({
+      value: info.id,
+      name: info.name,
+    }));
+    console.table(res);
+    console.log("Viewing Employees (by Department)");
+    promptDepartment(departmentOptions);
+  });
+}
