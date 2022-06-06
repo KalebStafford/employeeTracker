@@ -123,3 +123,19 @@ function promptDepartment(departmentOptions) {
       });
     });
 }
+function addEmployees() {
+  let database = `
+    SELECT y.id, y.title, y.salary 
+    FROM role y`;
+  connection.query(database,(err, res) => {
+    if (err) throw err;
+    let roleOptions = res.map(({ id, title, salary }) => ({
+      value: id,
+      title: `${title}`,
+      salary: `${salary}`,
+    }));
+    console.log("Possible Roles:");
+    console.table(res);
+    promptInsert(roleOptions);
+  });
+}
