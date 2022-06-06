@@ -247,3 +247,52 @@ function employeeData() {
     roleArray(employeeChoices);
   });
 }
+function roleArray(employeeChoices) {
+  let database = `
+  SELECT y.id, y.title, y.salary 
+  FROM role y`;
+  let roleOptions;
+  connection.query(database, (err, res) => {
+    if (err) throw err;
+    roleOptions = res.map(({ id, title, salary }) => ({
+      value: id,
+      title: `${title}`,
+      salary: `${salary}`,
+    }));
+    console.table(res);
+    promptEmployeeRole(employeeChoices, roleOptions);
+  });
+}
+function promptEmployeeRole(employeeChoices, roleOptions) {
+  inquirer
+    .prompt([
+      {
+        name: "employeeID",
+        message: "Which employee do you want to set with the role?",
+        choices: employeeChoices,
+        type: "list",
+      },
+      {
+        name: "roleID",
+        message: "Which role do you want to update?",
+        choices: roleOptions,
+        type: "list",
+      },
+    ])
+    .then((choice) => {
+      let database = `
+      UPDATE employee 
+      SET role_id = ? 
+      WHERE id = ?`;
+      connection.query(
+        database,
+        [choice.roleID, choice.employeeID],
+        (err, res) => {
+          if (err) throw err;
+          console.log(res.affectedRows + "has updated");
+          console.table(res);
+          dataPrompt();
+        }
+      );
+    });
+}
