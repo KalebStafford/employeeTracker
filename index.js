@@ -198,3 +198,24 @@ function removeEmployees() {
     promptDelete(deleteOptions);
   });
 }
+function promptDelete(deleteOptions) {
+  inquirer
+    .prompt([
+      {
+        name: "employeeID",
+        message: "Select employee to remove:",
+        choices: deleteOptions,
+        type: "list",
+      },
+    ])
+    .then((choice) => {
+      let database = `
+      DELETE FROM employee WHERE ?`;
+      connection.query(database, { id: choice.employeeID },(err, res) => {
+        if (err) throw err;
+        console.log(res.affectedRows + "has been removed");
+        console.table(res);
+        dataPrompt();
+      });
+    });
+}
